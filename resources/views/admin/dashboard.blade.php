@@ -19,6 +19,7 @@
                     <table class="min-w-full leading-normal">
                         <thead>
                             <tr>
+                                <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Photo</th>
                                 <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Name</th>
                                 <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Email</th>
                                 <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">CNE</th>
@@ -30,6 +31,19 @@
                         <tbody>
                             @foreach($students as $student)
                             <tr>
+                                <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                    <div class="flex-shrink-0 w-10 h-10">
+                                        @if($student->photo)
+                                            <img class="w-full h-full rounded-full object-cover" src="{{ Str::startsWith($student->photo, 'http') ? $student->photo : asset('storage/' . $student->photo) }}" alt="{{ $student->name }}" />
+                                        @else
+                                            <span class="inline-block h-10 w-10 rounded-full overflow-hidden bg-gray-100">
+                                                <svg class="h-full w-full text-gray-300" fill="currentColor" viewBox="0 0 24 24">
+                                                    <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
+                                                </svg>
+                                            </span>
+                                        @endif
+                                    </div>
+                                </td>
                                 <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ $student->name }}</td>
                                 <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ $student->email }}</td>
                                 <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ $student->student->cne ?? 'N/A' }}</td>

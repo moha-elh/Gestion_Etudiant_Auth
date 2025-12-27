@@ -55,15 +55,9 @@ class FirebaseController extends Controller
                         'email' => $email,
                         'password' => Hash::make(uniqid()), // Random password
                         'role' => 'student', // Default role
+                        'photo' => $decoded->picture ?? null, // Save Google profile picture
                     ]);
-                    
-                     // Create default student record
-                    Student::create([
-                        'user_id' => $user->id,
-                        'cne' => substr('TEMP_' . time() . uniqid(), 0, 15), // Ensure it fits standard string column
-                        'sector' => 'Needs Update',
-                        'city' => 'Needs Update',
-                    ]);
+                    // DO NOT create Student record here. Let the completion flow handle it.
                     \Illuminate\Support\Facades\DB::commit();
                 } catch (\Exception $e) {
                     \Illuminate\Support\Facades\DB::rollBack();
@@ -75,7 +69,15 @@ class FirebaseController extends Controller
             Auth::login($user);
 
             // 7. Determine Redirect URL
-            $redirectUrl = $user->role === 'admin' ? route('admin.dashboard') : route('student.dashboard');
+            if ($user->role === 'admin') {
+                $redirectUrl = route('admin.dashboard');
+            } elseif ($user->student) {
+                 // Student record exists, go to dashboard
+                $redirectUrl = route('student.dashboard');
+            } else {
+                 // No student record, go to completion page
+                $redirectUrl = route('student.complete-registration');
+            }
 
             return response()->json([
                 'success' => true,

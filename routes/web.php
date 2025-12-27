@@ -46,6 +46,9 @@ Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')
 });
 
 Route::middleware('auth')->group(function () {
+    Route::get('/complete-registration', [StudentController::class, 'showCompleteRegistration'])->name('student.complete-registration');
+    Route::post('/complete-registration', [StudentController::class, 'storeCompleteRegistration'])->name('student.complete-registration.store');
+    
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

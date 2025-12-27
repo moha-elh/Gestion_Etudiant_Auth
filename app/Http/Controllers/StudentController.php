@@ -86,4 +86,31 @@ class StudentController extends Controller
 
         return redirect()->route('admin.dashboard')->with('success', 'Student deleted successfully.');
     }
+
+    public function showCompleteRegistration()
+    {
+        // Prevent users who already have a student record from accessing this page
+        if (auth()->user()->student) {
+            return redirect()->route('dashboard');
+        }
+        return view('auth.complete-registration');
+    }
+
+    public function storeCompleteRegistration(\Illuminate\Http\Request $request)
+    {
+        $request->validate([
+            'cne' => 'required|string|unique:students',
+            'sector' => 'required|string',
+            'city' => 'required|string',
+        ]);
+
+        \App\Models\Student::create([
+            'user_id' => auth()->id(),
+            'cne' => $request->cne,
+            'sector' => $request->sector,
+            'city' => $request->city,
+        ]);
+
+        return redirect()->route('student.dashboard');
+    }
 }

@@ -28,6 +28,16 @@ class ProfileController extends Controller
     {
         $request->user()->fill($request->validated());
 
+        if ($request->hasFile('photo')) {
+            $request->validate(['photo' => 'image|max:2048']);
+            // Delete old photo if exists
+            if ($request->user()->photo && \Illuminate\Support\Facades\Storage::disk('public')->exists($request->user()->photo)) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($request->user()->photo);
+            }
+             $path = $request->file('photo')->store('profile-photos', 'public');
+             $request->user()->photo = $path;
+        }
+
         if ($request->user()->isDirty('email')) {
             $request->user()->email_verified_at = null;
         }
